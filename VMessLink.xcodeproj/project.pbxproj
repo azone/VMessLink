@@ -11,6 +11,8 @@
 		DD31B8D825CAD3EE006FEDCF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD31B8D725CAD3EE006FEDCF /* ContentView.swift */; };
 		DD31B8DA25CAD3EF006FEDCF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD31B8D925CAD3EF006FEDCF /* Assets.xcassets */; };
 		DD31B8DD25CAD3EF006FEDCF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD31B8DC25CAD3EF006FEDCF /* Preview Assets.xcassets */; };
+		DD31B8E825CAD431006FEDCF /* VMessModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD31B8E725CAD431006FEDCF /* VMessModel.swift */; };
+		DD31B8EB25CAD4A8006FEDCF /* Combobox.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD31B8EA25CAD4A8006FEDCF /* Combobox.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +23,8 @@
 		DD31B8DC25CAD3EF006FEDCF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		DD31B8DE25CAD3EF006FEDCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DD31B8DF25CAD3EF006FEDCF /* VMessLink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VMessLink.entitlements; sourceTree = "<group>"; };
+		DD31B8E725CAD431006FEDCF /* VMessModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VMessModel.swift; sourceTree = "<group>"; };
+		DD31B8EA25CAD4A8006FEDCF /* Combobox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Combobox.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,12 +57,14 @@
 		DD31B8D425CAD3EE006FEDCF /* VMessLink */ = {
 			isa = PBXGroup;
 			children = (
+				DD31B8E625CAD420006FEDCF /* Model */,
 				DD31B8D525CAD3EE006FEDCF /* VMessLinkApp.swift */,
 				DD31B8D725CAD3EE006FEDCF /* ContentView.swift */,
 				DD31B8D925CAD3EF006FEDCF /* Assets.xcassets */,
 				DD31B8DE25CAD3EF006FEDCF /* Info.plist */,
 				DD31B8DF25CAD3EF006FEDCF /* VMessLink.entitlements */,
 				DD31B8DB25CAD3EF006FEDCF /* Preview Content */,
+				DD31B8EA25CAD4A8006FEDCF /* Combobox.swift */,
 			);
 			path = VMessLink;
 			sourceTree = "<group>";
@@ -69,6 +75,14 @@
 				DD31B8DC25CAD3EF006FEDCF /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		DD31B8E625CAD420006FEDCF /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				DD31B8E725CAD431006FEDCF /* VMessModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -142,6 +156,8 @@
 			files = (
 				DD31B8D825CAD3EE006FEDCF /* ContentView.swift in Sources */,
 				DD31B8D625CAD3EE006FEDCF /* VMessLinkApp.swift in Sources */,
+				DD31B8EB25CAD4A8006FEDCF /* Combobox.swift in Sources */,
+				DD31B8E825CAD431006FEDCF /* VMessModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
