@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 private let prevStoredKey = "PREV_STORED"
 
@@ -113,20 +114,67 @@ struct ContentView: View {
             let link = "vmess://\(data.base64EncodedString())"
             let pasteboard = NSPasteboard.general
             pasteboard.clearContents()
-            if !pasteboard.setString(link, forType: .string) {
+            guard pasteboard.setString(link, forType: .string) else {
                 showAlert(with: "Copy failed")
+                return
             }
+            presentNotification()
         } catch {
             showAlert(with: error.localizedDescription)
         }
     }
 
-    private func showAlert(with message: String) {
+    private func showAlert(with title: String, message: String? = nil) {
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = message
+        alert.messageText = title
+        if let message = message {
+            alert.informativeText = message
+        }
         alert.addButton(withTitle: "OK")
         alert.runModal()
+    }
+
+    private func presentNotification() {
+        let title = "The VMess Link was copied to your clipboard!"
+        let subtitle = "You can paste it to your v2ray client now!"
+        guard !NSApp.isActive else {
+            showAlert(with: title, message: subtitle)
+            return
+        }
+
+        let nc = UNUserNotificationCenter.current()
+
+        let showNotification = {
+            let content = UNMutableNotificationContent()
+            content.title = title
+            content.subtitle = subtitle
+            content.sound = .default
+            let request = UNNotificationRequest(
+                identifier: "copy-success-\(UUID().uuidString)",
+                content: content,
+                trigger: nil
+            )
+            nc.add(request)
+        }
+
+        nc.getNotificationSettings { settings in
+            switch settings.authorizationStatus {
+            case .authorized, .provisional:
+                DispatchQueue.main.async {
+                    showNotification()
+                }
+            case .notDetermined:
+                nc.requestAuthorization(options: [.alert, .sound]) { (authorized, _) in
+                    if authorized {
+                        DispatchQueue.main.async {
+                            showNotification()
+                        }
+                    }
+                }
+            default: break
+            }
+        }
     }
 }
 
