@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+private let prevStoredKey = "PREV_STORED"
+
 struct ContentView: View {
     @State var fields: [VMessField: String] = [:]
 
@@ -38,11 +40,41 @@ struct ContentView: View {
         .fixedSize(horizontal: false, vertical: true)
         .frame(minWidth: 400, maxWidth: 800)
         .navigationTitle("VMess Link Generator")
+        .onAppear(perform: {
+            prefillFields()
+        })
+    }
+
+    private func prefillFields() {
+        let setDefaultValues = {
+            for field in VMessField.allCases {
+                if let value = field.defaultValue {
+                    fields[field] = value
+                }
+            }
+        }
+
+        guard let data = UserDefaults.standard.data(forKey: prevStoredKey) else {
+            setDefaultValues()
+            return
+        }
+
+        let decoder = JSONDecoder()
+        do {
+            let prevStored = try decoder.decode([String: String].self, from: data)
+            for (key, value) in prevStored {
+                if let field = VMessField(rawValue: key) {
+                    fields[field] = value
+                }
+            }
+        } catch {
+            setDefaultValues()
+        }
     }
 
     private func binding(for field: VMessField) -> Binding<String> {
         return .init {
-            fields[field, default: field.defaultValue ?? ""]
+            fields[field, default: ""]
         } set: {
             fields[field] = $0
         }
@@ -77,6 +109,7 @@ struct ContentView: View {
         do {
             let info = Dictionary(fields.map { ($0.key.rawValue, $0.value) }) { $1 }
             let data = try encoder.encode(info)
+            UserDefaults.standard.setValue(data, forKey: prevStoredKey)
             let link = "vmess://\(data.base64EncodedString())"
             let pasteboard = NSPasteboard.general
             pasteboard.clearContents()

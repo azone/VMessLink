@@ -23,7 +23,9 @@ struct Combobox: NSViewRepresentable {
         return combobox
     }
 
-    func updateNSView(_ nsView: NSViewType, context: Context) {}
+    func updateNSView(_ nsView: NSViewType, context: Context) {
+        nsView.stringValue = selection
+    }
 
     func makeCoordinator() -> Coordinator {
         return Coordinator($selection)

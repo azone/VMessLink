@@ -48,6 +48,10 @@ enum VMessField: String, Codable, Hashable, CaseIterable {
         switch self {
         case .version:
             return "2"
+        case .aid:
+            return "0"
+        case .port:
+            return "443"
         case .net:
             return "ws"
         case .type:
