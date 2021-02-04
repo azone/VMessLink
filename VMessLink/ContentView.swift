@@ -47,25 +47,30 @@ struct ContentView: View {
     }
 
     private func prefillFields() {
-        for field in VMessField.allCases {
-            if let value = field.defaultValue {
-                fields[field] = value
+        let fillFields: (((VMessField) -> String?)?) -> Void = { valueBlock in
+            for field in VMessField.allCases {
+                if let value = valueBlock?(field) {
+                    fields[field] = value
+                } else if let value = field.defaultValue {
+                    fields[field] = value
+                }
             }
         }
 
         guard let data = UserDefaults.standard.data(forKey: prevStoredKey) else {
+            fillFields(nil)
             return
         }
 
         let decoder = JSONDecoder()
         do {
             let prevStored = try decoder.decode([String: String].self, from: data)
-            for (key, value) in prevStored {
-                if let field = VMessField(rawValue: key) {
-                    fields[field] = value
-                }
+            fillFields { field -> String? in
+                return prevStored[field.rawValue]
             }
-        } catch {}
+        } catch {
+            fillFields(nil)
+        }
     }
 
     private func binding(for field: VMessField) -> Binding<String> {
