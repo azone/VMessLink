@@ -47,16 +47,13 @@ struct ContentView: View {
     }
 
     private func prefillFields() {
-        let setDefaultValues = {
-            for field in VMessField.allCases {
-                if let value = field.defaultValue {
-                    fields[field] = value
-                }
+        for field in VMessField.allCases {
+            if let value = field.defaultValue {
+                fields[field] = value
             }
         }
 
         guard let data = UserDefaults.standard.data(forKey: prevStoredKey) else {
-            setDefaultValues()
             return
         }
 
@@ -68,9 +65,7 @@ struct ContentView: View {
                     fields[field] = value
                 }
             }
-        } catch {
-            setDefaultValues()
-        }
+        } catch {}
     }
 
     private func binding(for field: VMessField) -> Binding<String> {

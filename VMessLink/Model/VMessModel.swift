@@ -10,7 +10,7 @@ import Foundation
 enum VMessField: String, Codable, Hashable, CaseIterable {
     case version = "v"
     case ps
-    case address = "addr"
+    case address = "add"
     case port
     case id
     case aid
@@ -19,6 +19,8 @@ enum VMessField: String, Codable, Hashable, CaseIterable {
     case host
     case path
     case tls
+    case level
+    case security
 
     var name: String {
         switch self {
@@ -26,6 +28,8 @@ enum VMessField: String, Codable, Hashable, CaseIterable {
             return "version"
         case .address:
             return "address"
+        case .aid:
+            return "alterID"
         default:
             return rawValue
         }
@@ -39,6 +43,8 @@ enum VMessField: String, Codable, Hashable, CaseIterable {
             return ["none", "http", "srtp", "utp", "wechat-video"]
         case .tls:
             return ["tls"]
+        case .security:
+            return ["aes-128-gcm", "chacha20-poly1305", "auto", "none"]
         default:
             return nil
         }
@@ -58,6 +64,12 @@ enum VMessField: String, Codable, Hashable, CaseIterable {
             return "none"
         case .tls:
             return "tls"
+        case .path:
+            return "/"
+        case .level:
+            return "0"
+        case .security:
+            return "auto"
         default:
             return nil
         }
