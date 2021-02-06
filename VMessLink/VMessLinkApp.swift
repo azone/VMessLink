@@ -13,5 +13,8 @@ struct VMessLinkApp: App {
         WindowGroup {
             ContentView()
         }
+        .commands {
+            CommandGroup(replacing: .newItem, addition: {})
+        }
     }
 }
