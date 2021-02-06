@@ -118,7 +118,7 @@ struct ContentView: View {
                 showAlert(with: "Copy failed")
                 return
             }
-            presentNotification()
+            presentNotification(link: link)
         } catch {
             showAlert(with: error.localizedDescription)
         }
@@ -135,9 +135,9 @@ struct ContentView: View {
         alert.runModal()
     }
 
-    private func presentNotification() {
+    private func presentNotification(link: String) {
         let title = "The VMess Link was copied to your clipboard!"
-        let subtitle = "You can paste it to your v2ray client now!"
+        let subtitle = "\(link)\nYou can paste it to your v2ray client now!"
         guard !NSApp.isActive else {
             showAlert(with: title, message: subtitle)
             return
@@ -151,7 +151,7 @@ struct ContentView: View {
             content.subtitle = subtitle
             content.sound = .default
             let request = UNNotificationRequest(
-                identifier: "copy-success-\(UUID().uuidString)",
+                identifier: "copy-success",
                 content: content,
                 trigger: nil
             )
