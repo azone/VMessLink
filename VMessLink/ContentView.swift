@@ -10,8 +10,15 @@ import UserNotifications
 
 private let prevStoredKey = "PREV_STORED"
 
+let qrCodeFileUrl: URL = {
+    let tempUrl = URL(fileURLWithPath: NSTemporaryDirectory())
+    return tempUrl.appendingPathComponent("vmess-link.qrcode.jpg")
+}()
+
 struct ContentView: View {
     @State var fields: [VMessField: String] = [:]
+    @State var presentQRCode = false
+    @State var qrCodeImage: NSImage?
 
     var body: some View {
         VStack(alignment: .center) {
@@ -29,13 +36,26 @@ struct ContentView: View {
 
             Spacer(minLength: 20)
 
-            Button(action: copyVMessLink, label: {
-                Label("Copy VMess Link", systemImage: "doc.on.clipboard")
-            })
-            .keyboardShortcut(
-                KeyEquivalent("c"),
-                modifiers: [.command, .shift]
-            )
+            HStack {
+                Button(action: copyVMessLink, label: {
+                    Label("Copy VMess Link", systemImage: "doc.on.clipboard")
+                })
+                .keyboardShortcut(
+                    KeyEquivalent("c"),
+                    modifiers: [.command, .shift]
+                )
+
+                Button(action: generateQRCode, label: {
+                    Label("QRCode Image", systemImage: "qrcode")
+                })
+                .popover(isPresented: $presentQRCode) {
+                    QRCodePreviewView(qrCodeImage: qrCodeImage)
+                }
+                .keyboardShortcut(
+                    KeyEquivalent("i"),
+                    modifiers: [.command]
+                )
+            }
         }
         .padding()
         .fixedSize(horizontal: false, vertical: true)
@@ -101,17 +121,22 @@ struct ContentView: View {
         return true
     }
 
+    private func vmessLink() throws -> String {
+        let encoder = JSONEncoder()
+
+        let info = Dictionary(fields.map { ($0.key.rawValue, $0.value) }) { $1 }
+        let data = try encoder.encode(info)
+        UserDefaults.standard.setValue(data, forKey: prevStoredKey)
+        return "vmess://\(data.base64EncodedString())"
+    }
+
     private func copyVMessLink() {
         guard validateFields() else {
             return
         }
 
-        let encoder = JSONEncoder()
         do {
-            let info = Dictionary(fields.map { ($0.key.rawValue, $0.value) }) { $1 }
-            let data = try encoder.encode(info)
-            UserDefaults.standard.setValue(data, forKey: prevStoredKey)
-            let link = "vmess://\(data.base64EncodedString())"
+            let link = try vmessLink()
             let pasteboard = NSPasteboard.general
             pasteboard.clearContents()
             guard pasteboard.setString(link, forType: .string) else {
@@ -122,6 +147,40 @@ struct ContentView: View {
         } catch {
             showAlert(with: error.localizedDescription)
         }
+    }
+
+    private func generateQRCode() {
+        guard validateFields() else {
+            return
+        }
+
+        guard
+            let link = try? vmessLink(),
+            let linkData = link.data(using: .ascii),
+            let filter = CIFilter(name: "CIQRCodeGenerator") else {
+            return
+        }
+        filter.setValue(linkData, forKey: "inputMessage")
+
+        guard let image = filter.outputImage?.transformed(by: .init(scaleX: 3, y: 3)) else {
+            return
+        }
+
+        let rep = NSCIImageRep(ciImage: image)
+        let nsImage = NSImage(size: rep.size)
+        nsImage.addRepresentation(rep)
+        qrCodeImage = nsImage
+        saveQRCodeImage()
+
+        presentQRCode = true
+    }
+
+    private func saveQRCodeImage() {
+        guard let image = qrCodeImage, let imageData = image.tiffRepresentation else {
+            return
+        }
+
+        try? imageData.write(to: qrCodeFileUrl)
     }
 
     private func showAlert(with title: String, message: String? = nil) {
