@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct QRCodePreviewView: View {
-    let qrCodeImage: NSImage?
+    @Binding var qrCodeImage: NSImage?
 
     var body: some View {
         if let image = qrCodeImage {
@@ -26,6 +26,9 @@ struct QRCodePreviewView: View {
                 }
             }
             .padding()
+        } else {
+            Text("No QR code image generated")
+                .padding()
         }
     }
 
@@ -38,7 +41,7 @@ struct QRCodePreviewView: View {
         panel.nameFieldStringValue = "qrcode.jpg"
         panel.runModal()
 
-        guard let url = panel.url else {
+        guard panel.runModal() == .OK, let url = panel.url else {
             return
         }
         try? image.tiffRepresentation?.write(to: url)
@@ -47,6 +50,6 @@ struct QRCodePreviewView: View {
 
 struct QRCodePreviewView_Previews: PreviewProvider {
     static var previews: some View {
-        QRCodePreviewView(qrCodeImage: nil)
+        QRCodePreviewView(qrCodeImage: .constant(nil))
     }
 }

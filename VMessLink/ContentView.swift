@@ -49,7 +49,7 @@ struct ContentView: View {
                     Label("QRCode Image", systemImage: "qrcode")
                 })
                 .popover(isPresented: $presentQRCode) {
-                    QRCodePreviewView(qrCodeImage: qrCodeImage)
+                    QRCodePreviewView(qrCodeImage: $qrCodeImage)
                 }
                 .keyboardShortcut(
                     KeyEquivalent("i"),
@@ -158,11 +158,13 @@ struct ContentView: View {
             let link = try? vmessLink(),
             let linkData = link.data(using: .ascii),
             let filter = CIFilter(name: "CIQRCodeGenerator") else {
+            qrCodeImage = nil
             return
         }
         filter.setValue(linkData, forKey: "inputMessage")
 
         guard let image = filter.outputImage?.transformed(by: .init(scaleX: 3, y: 3)) else {
+            qrCodeImage = nil
             return
         }
 
